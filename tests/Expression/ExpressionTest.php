@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace DI\ExpressionParser\Tests\Expression;
 
@@ -17,7 +17,7 @@ class ExpressionTest extends TestCase
      */
     public function testAllExpressions(Expression $expression, $params, $expected)
     {
-        $expression->map($params);
+        $expression->setMappings($params);
         $this->assertEquals($expected, $expression->value());
     }
 

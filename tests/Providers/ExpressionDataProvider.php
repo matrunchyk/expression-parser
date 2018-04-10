@@ -1,9 +1,17 @@
-<?php
+<?php declare(strict_types=1);
 
 use DI\ExpressionParser\Expression;
 
 return [
-    'Simple substitution' => [
+    'equal helper with substitution [experiment]' => [
+        new Expression('or_x(equal([attr1], 1), in_array(explode([attr2]), "hello"))'),
+        [
+            'attr1' => 1,
+            'attr2' => 2,
+        ],
+        true,
+    ],
+    'simple substitution' => [
         new Expression('[attr1]'),
         [
             'attr1' => 1,
@@ -11,7 +19,7 @@ return [
         ],
         '1',
     ],
-    'Substitution is missing' => [
+    'substitution is missing' => [
         new Expression('[attr3]'),
         [
             'attr1' => 1,
@@ -19,7 +27,7 @@ return [
         ],
         '',
     ],
-    'Equal helper with substitution' => [
+    'equal helper with substitution' => [
         new Expression('equal([attr1], 1)'),
         [
             'attr1' => 1,
@@ -229,8 +237,8 @@ return [
                 30,
                 20,
             ],
-            'filter_func' => function($expression, $value) {
-                return $value < $expression->getMapping('filter_attr');
+            'filter_func' => function(Expression $expression, $value) {
+                return $value < $expression->getMappings('filter_attr');
             },
             'filter_attr' => 30,
             'by' => 'desc',

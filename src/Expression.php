@@ -1,27 +1,27 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace DI\ExpressionParser;
 
 class Expression
 {
     /**
-     * @var string
+     * @var ExpressionParser
      */
-    protected $expression;
+    protected $parser;
 
     /**
      * @var array
      */
-    protected $mapping;
+    protected $mappings;
 
     /**
      * Expression constructor.
      *
-     * @param string $expression
+     * @param string $expression_string
      */
-    public function __construct(string $expression)
+    public function __construct(string $expression_string)
     {
-        $this->expression = $expression;
+        $this->parser = new ExpressionParser($expression_string);
     }
 
     /**
@@ -29,9 +29,21 @@ class Expression
      *
      * @param array $mapping
      */
-    public function map(array $mapping): void
+    public function setMappings(array $mapping): void
     {
-        $this->mapping = $mapping;
+        $this->mappings = $mapping;
+    }
+
+    /**
+     * Gets mapping
+     *
+     * @param string $key
+     *
+     * @return mixed|null
+     */
+    public function getMappings(string $key)
+    {
+        return $this->mappings[$key] ?? null;
     }
 
     /**
@@ -41,7 +53,7 @@ class Expression
      */
     public function value()
     {
-        return 1;
+        return $this->parser->parse($this->mappings);
     }
 
 }
