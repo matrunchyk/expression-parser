@@ -3,7 +3,6 @@
 namespace DI\ExpressionParser\Tests\Expression;
 
 use DI\ExpressionParser\Expression;
-use DI\ExpressionParser\Tests\ExpressionDataProvider;
 use PHPUnit\Framework\TestCase;
 
 class ExpressionTest extends TestCase

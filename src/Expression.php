@@ -55,5 +55,4 @@ class Expression
     {
         return $this->parser->parse($this->mappings);
     }
-
 }

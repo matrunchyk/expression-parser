@@ -7,7 +7,10 @@ return [
         new Expression('or_x(equal([attr1], 1), in_array(explode([attr2]), "hello"))'),
         [
             'attr1' => 1,
-            'attr2' => 2,
+            'attr2' => [
+                "a" => 1,
+                "b" => "1",
+            ],
         ],
         true,
     ],
