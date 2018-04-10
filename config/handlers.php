@@ -1,9 +1,7 @@
-<?php
-
-use DI\ExpressionParser\Handlers\Standard;
+<?php declare(strict_types=1);
 
 return [
-    Standard::class,
+    \DI\ExpressionParser\Handlers\Standard::class,
 
     // Add custom expression handlers here:
     // \Acme\Handlers\CustomHandler::class,

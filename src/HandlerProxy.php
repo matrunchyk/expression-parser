@@ -51,11 +51,12 @@ class HandlerProxy
      */
     protected function loadHandlers()
     {
-        $handlers = include __DIR__ .'/config/handlers.php';
+        $handlers = include __DIR__ . '/../config/handlers.php';
         foreach ($handlers as $handler) {
-            if (class_exists($handler)) {
+            if (class_exists(addslashes($handler))) {
                 throw new \InvalidArgumentException('Class '.$handler.' does not exist.');
             }
+
             try {
                 $refClass = new ReflectionClass($handler);
             } catch (\Exception $e) {
@@ -66,13 +67,13 @@ class HandlerProxy
                 throw new \InvalidArgumentException('Class '.$handler.' is not instantiable.');
             }
 
-            $handlerClass = new $handler($this->context);
+            $instance = new $handler($this->context);
 
-            if (!$handlerClass instanceof BaseHandler) {
+            if (!$instance instanceof BaseHandler) {
                 throw new \InvalidArgumentException('Class '.$handler.' should be an instance of BaseHandler.');
             }
 
-            $this->handlers[] = $handlerClass;
+            $this->handlers[] = $instance;
         }
     }
 }

@@ -50,8 +50,8 @@ class ExpressionParser
      */
     public function parse($mappings = [])
     {
+        $this->setMappings($mappings);
         $this->buildExpressions();
-        $this->substituteMappings($mappings);
 
         return $this->result();
     }
@@ -61,7 +61,7 @@ class ExpressionParser
      *
      * @param $mappings
      */
-    protected function substituteMappings($mappings = [])
+    protected function setMappings($mappings = [])
     {
         $this->mappings = $mappings;
     }
@@ -114,7 +114,7 @@ class ExpressionParser
                         $funcArgs
                     );
                 } elseif ($value instanceof Node\Expr\Variable) {
-                    return $value->name;
+                    return $this->mappings[$value->name];
                 } elseif ($value instanceof Node\Scalar) {
                     return $value->value;
                 }

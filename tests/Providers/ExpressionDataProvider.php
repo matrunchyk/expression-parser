@@ -4,13 +4,10 @@ use DI\ExpressionParser\Expression;
 
 return [
     'equal helper with substitution [experiment]' => [
-        new Expression('or_x(equal([attr1], 1), in_array(explode([attr2]), "hello"))'),
+        new Expression('or_x(equal([attr1], 1), in_array(explode([keywords]), "hello"))'),
         [
             'attr1' => 1,
-            'attr2' => [
-                "a" => 1,
-                "b" => "1",
-            ],
+            'keywords' => 'hello,world',
         ],
         true,
     ],
