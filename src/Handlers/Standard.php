@@ -232,15 +232,4 @@ class Standard extends BaseHandler
     {
         return collect($items)->take($offset)->toArray();
     }
-
-    /**
-     * Returns a first element in $items array
-     * @param array $items
-     *
-     * @return mixed
-     */
-    public function first(array $items)
-    {
-        return collect($items)->first();
-    }
 }

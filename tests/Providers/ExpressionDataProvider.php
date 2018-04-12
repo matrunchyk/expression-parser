@@ -4,6 +4,15 @@ use DI\ExpressionParser\Expression;
 use DI\ExpressionParser\ExpressionParser;
 
 return [
+    'testing_laravel_collection' => [
+        new Expression('first(collect([attr1], [attr2]), [offset])'),
+        [
+            'attr1' => 'value 1',
+            'attr2' => 'value 2',
+            'offset' => 1,
+        ],
+        'value 1',
+    ],
     'custom invoker parameters' => [
         new Expression('first(take(sort(filter([attr1], [filter_func]), [dir]), [offset]))'),
         [

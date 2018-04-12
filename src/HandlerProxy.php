@@ -3,6 +3,7 @@
 namespace DI\ExpressionParser;
 
 use DI\ExpressionParser\Handlers\BaseHandler;
+use DI\ExpressionParser\Handlers\Standard;
 use ReflectionClass;
 
 class HandlerProxy
@@ -41,7 +42,7 @@ class HandlerProxy
                 return call_user_func_array([$handler, $name], $arguments);
             }
         }
-        throw new \InvalidArgumentException('Expression handler '.$name.' does not exist.');
+        throw new \InvalidArgumentException('Cannot resolve '.$name.' function.');
     }
 
     /**
@@ -52,7 +53,7 @@ class HandlerProxy
     protected function loadHandlers()
     {
         $handlers = include __DIR__ . '/../config/handlers.php';
-        foreach ($handlers as $handler) {
+        foreach ($handlers as $prefix => $handler) {
             if (class_exists(addslashes($handler))) {
                 throw new \InvalidArgumentException('Class '.$handler.' does not exist.');
             }
@@ -67,13 +68,7 @@ class HandlerProxy
                 throw new \InvalidArgumentException('Class '.$handler.' is not instantiable.');
             }
 
-            $instance = new $handler($this->context);
-
-            if (!$instance instanceof BaseHandler) {
-                throw new \InvalidArgumentException('Class '.$handler.' should be an instance of BaseHandler.');
-            }
-
-            $this->handlers[] = $instance;
+            $this->handlers[$prefix] = new $handler($this->context);
         }
     }
 }
