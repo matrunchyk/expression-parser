@@ -1,6 +1,6 @@
 The MIT License (MIT)
 
-Copyright (c) 2016 Sergii Matrunchyk
+Copyright (c) 2018 Serhii Matrunchyk
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
