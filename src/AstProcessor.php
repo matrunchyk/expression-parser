@@ -118,8 +118,12 @@ class AstProcessor
     {
         $return = $value->value;
 
-        if ($value instanceof Node\Scalar\String_ && $json = json_decode($return)) {
-            return $json;
+        if ($value instanceof Node\Scalar\String_) {
+            $json = json_decode($return);
+
+            if ($json) {
+                return $json;
+            };
         }
 
         return $return;
