@@ -4,33 +4,13 @@ use DI\ExpressionParser\Expression;
 use DI\ExpressionParser\ExpressionParser;
 
 return [
-    'testing_laravel_collection' => [
-        new Expression('first(collect([attr1], [attr2]), [offset])'),
+    'simple substitution' => [
+        new Expression('[attr1]'),
         [
-            'attr1' => 'value 1',
-            'attr2' => 'value 2',
-            'offset' => 1,
+            'attr1' => 1,
+            'attr2' => 2,
         ],
-        'value 1',
-    ],
-    'custom invoker parameters' => [
-        new Expression('first(take(sort(filter([attr1], [filter_func]), [dir]), [offset]))'),
-        [
-            'attr1' => [
-                10,
-                30,
-                20,
-            ],
-            'filter_func' => function(ExpressionParser $context, $value) {
-                return array_filter($value, function ($item) use ($context) {
-                    return $item < $context->mappings['filter_attr'];
-                });
-            },
-            'filter_attr' => 30,
-            'dir' => 'desc',
-            'offset' => 1,
-        ],
-        20,
+        '1',
     ],
     'get helper and mapping parameters' => [
         new Expression('get([attr1], {"map":{"a":1, "b": 2, "c": 3}})'),
@@ -113,14 +93,6 @@ return [
             'attr2' => 2,
         ],
         true,
-    ],
-    'simple substitution' => [
-        new Expression('[attr1]'),
-        [
-            'attr1' => 1,
-            'attr2' => 2,
-        ],
-        '1',
     ],
     'equal helper with substitution [experiment]' => [
         new Expression('or_x(equal([attr1], 1), in_array(explode([keywords]), "hello"))'),
@@ -257,5 +229,33 @@ return [
             'attr2' => 'hello,world',
         ],
         true,
+    ],
+    'testing_laravel_collection' => [
+        new Expression('first(collect([attr1], [attr2]))'),
+        [
+            'attr1' => 'value 1',
+            'attr2' => 'value 2',
+
+        ],
+        'value 1',
+    ],
+    'custom invoker parameters' => [
+        new Expression('first(take(sort(filter([attr1], [filter_func]), [dir]), [offset]))'),
+        [
+            'attr1' => [
+                10,
+                30,
+                20,
+            ],
+            'filter_func' => function(ExpressionParser $context, $value) {
+                return array_filter($value, function ($item) use ($context) {
+                    return $item < $context->mappings['filter_attr'];
+                });
+            },
+            'filter_attr' => 30,
+            'dir' => 'desc',
+            'offset' => 1,
+        ],
+        20,
     ],
 ];
