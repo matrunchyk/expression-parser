@@ -1,13 +1,107 @@
 <?php declare(strict_types=1);
 
 use DI\ExpressionParser\Expression;
+use DI\ExpressionParser\ExpressionParser;
 
 return [
-    'equal helper with substitution [experiment]' => [
-        new Expression('or_x(equal([attr1], 1), in_array(explode([keywords]), "hello"))'),
+    'custom invoker parameters' => [
+        new Expression('first(take(sort(filter([attr1], [filter_func]), [dir]), [offset]))'),
+        [
+            'attr1' => [
+                10,
+                30,
+                20,
+            ],
+            'filter_func' => function(ExpressionParser $context, $value) {
+                return array_filter($value, function ($item) use ($context) {
+                    return $item < $context->mappings['filter_attr'];
+                });
+            },
+            'filter_attr' => 30,
+            'dir' => 'desc',
+            'offset' => 1,
+        ],
+        20,
+    ],
+    'get helper and mapping parameters' => [
+        new Expression('get([attr1], {"map":{"a":1, "b": 2, "c": 3}})'),
+        [
+            'attr1' => 'b',
+        ],
+        2,
+    ],
+    'get helper and parameters with substitutions' => [
+        new Expression('get([attr1], {"count":true, "nullable":false})'),
+        [
+            'attr1' => [
+                'a',
+                'b',
+                'c',
+            ],
+        ],
+        3,
+    ],
+    'matches_in_array helper and parameter with invalid substitution' => [
+        new Expression('matches_in_array([keywords], "pool", {"sensitive":true})'),
+        [
+            'keywords' => [
+                'Swimming Pool',
+            ],
+        ],
+        false,
+    ],
+    'matches_in_array helper with substitution' => [
+        new Expression('matches_in_array([keywords], "pool")'),
+        [
+            'keywords' => [
+                'swimming pool',
+            ],
+        ],
+        true,
+    ],
+    'explode & is_empty nested helpers with substitutions' => [
+        new Expression('is_empty(explode([keywords]))'),
+        [
+            'keywords' => '',
+        ],
+        true,
+    ],
+    'substitution is missing' => [
+        new Expression('[attr3]'),
         [
             'attr1' => 1,
-            'keywords' => 'hello,world',
+            'attr2' => 2,
+        ],
+        '',
+    ],
+    'implode helper with a separator with substitutions' => [
+        new Expression('implode(([attr1],[attr2]), ",")'),
+        [
+            'attr1' => 'hello',
+            'attr2' => 'world',
+        ],
+        'hello,world',
+    ],
+    'implode helper with substitutions' => [
+        new Expression('implode(([attr1],[attr2]))'),
+        [
+            'attr1' => 'hello',
+            'attr2' => 'world',
+        ],
+        'hello world',
+    ],
+    'explode helper with substitution' => [
+        new Expression('explode([Rooms])'),
+        [
+            'Rooms' => 'Pantry,Study',
+        ],
+        ['Pantry', 'Study'],
+    ],
+    'has helper with substitution' => [
+        new Expression('has([attr1])'),
+        [
+            'attr1' => 1,
+            'attr2' => 2,
         ],
         true,
     ],
@@ -19,13 +113,13 @@ return [
         ],
         '1',
     ],
-    'substitution is missing' => [
-        new Expression('[attr3]'),
+    'equal helper with substitution [experiment]' => [
+        new Expression('or_x(equal([attr1], 1), in_array(explode([keywords]), "hello"))'),
         [
             'attr1' => 1,
-            'attr2' => 2,
+            'keywords' => 'hello,world',
         ],
-        '',
+        true,
     ],
     'equal helper with substitution' => [
         new Expression('equal([attr1], 1)'),
@@ -59,14 +153,6 @@ return [
         ],
         false,
     ],
-    'has helper with substitution' => [
-        new Expression('has([attr1])'),
-        [
-            'attr1' => 1,
-            'attr2' => 2,
-        ],
-        true,
-    ],
     'has helper with missing substitution' => [
         new Expression('has([attr3])'),
         [
@@ -74,29 +160,6 @@ return [
             'attr2' => 2,
         ],
         false,
-    ],
-    'implode helper with substitutions' => [
-        new Expression('implode(([attr1],[attr2]))'),
-        [
-            'attr1' => 'hello',
-            'attr2' => 'world',
-        ],
-        'hello world',
-    ],
-    'implode helper with a separator with substitutions' => [
-        new Expression('implode(([attr1],[attr2]), ",")'),
-        [
-            'attr1' => 'hello',
-            'attr2' => 'world',
-        ],
-        'hello,world',
-    ],
-    'explode helper with substitution' => [
-        new Expression('explode([Rooms])'),
-        [
-            'Rooms' => 'Pantry,Study',
-        ],
-        ['Pantry', 'Study'],
     ],
     'explode helper with a separator with substitutions' => [
         new Expression('explode([Rooms], ";")'),
@@ -146,13 +209,6 @@ return [
         ],
         false,
     ],
-    'explode & is_empty nested helpers with substitutions' => [
-        new Expression('is_empty(explode([keywords]))'),
-        [
-            'keywords' => '',
-        ],
-        true,
-    ],
     'not & equal nested helpers with substitutions' => [
         new Expression('not(equal([attr1], 2))'),
         [
@@ -192,58 +248,5 @@ return [
             'attr2' => 'hello,world',
         ],
         true,
-    ],
-    'matches_in_array helper with substitution' => [
-        new Expression('matches_in_array([keywords], "pool")'),
-        [
-            'keywords' => [
-                'swimming pool',
-            ],
-        ],
-        true,
-    ],
-    'matches_in_array helper and parameter with invalid substitution' => [
-        new Expression('matches_in_array([keywords], "pool", {"sensitive":true})'),
-        [
-            'keywords' => [
-                'Swimming Pool',
-            ],
-        ],
-        false,
-    ],
-    'get helper and parameters with substitutions' => [
-        new Expression('get([attr1], {"count":true, "nullable":false})'),
-        [
-            'attr1' => [
-                'a',
-                'b',
-                'c',
-            ],
-        ],
-        3,
-    ],
-    'get helper and mapping parameters' => [
-        new Expression('get([attr1], {"map":{"a":1, "b": 2, "c": 3}})'),
-        [
-            'attr1' => 'b',
-        ],
-        2,
-    ],
-    'custom invoker parameters' => [
-        new Expression('take(sort(filter([attr1], [filter_func]), [by]), [offset])'),
-        [
-            'attr1' => [
-                10,
-                30,
-                20,
-            ],
-            'filter_func' => function(Expression $expression, $value) {
-                return $value < $expression->getMappings('filter_attr');
-            },
-            'filter_attr' => 30,
-            'by' => 'desc',
-            'offset' => 1,
-        ],
-        20,
     ],
 ];
