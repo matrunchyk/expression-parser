@@ -17,21 +17,21 @@ class Expression
     /**
      * Expression constructor.
      *
-     * @param string $expression_string
+     * @param string $expressionString
      */
-    public function __construct(string $expression_string)
+    public function __construct(string $expressionString)
     {
-        $this->parser = new ExpressionParser($expression_string);
+        $this->parser = new ExpressionParser($expressionString);
     }
 
     /**
      * Sets mapping parameters
      *
-     * @param array $mapping
+     * @param array $mappings
      */
-    public function setMappings(array $mapping): void
+    public function setMappings(array $mappings): void
     {
-        $this->mappings = $mapping;
+        $this->mappings = $mappings;
     }
 
     /**
@@ -50,6 +50,7 @@ class Expression
      * Returns parsed result of the expression
      *
      * @return mixed
+     * @throws \Exception
      */
     public function value()
     {

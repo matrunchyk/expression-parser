@@ -2,14 +2,12 @@
 
 namespace DI\ExpressionParser;
 
-use PhpParser\Error;
-use PhpParser\Node;
 use PhpParser\ParserFactory;
 
 class ExpressionParser
 {
     /** @var array $mappings */
-    public $mappings;
+    protected $mappings = [];
 
     /** @var string $expression */
     protected $expression;
@@ -19,6 +17,9 @@ class ExpressionParser
 
     /** @var HandlerProxy $handlerProxy */
     protected $handlerProxy;
+
+    /** @var AstProcessor $processor */
+    protected $processor;
 
     const RE_NORMALIZE_PATTERN = <<<'EOD'
 ~
@@ -73,6 +74,7 @@ EOD;
     {
         $this->expression   = $expression;
         $this->handlerProxy = new HandlerProxy($this);
+        $this->processor = new AstProcessor($this);
     }
 
     /**
@@ -90,14 +92,45 @@ EOD;
      *
      * @param array $mappings
      *
-     * @return
+     * @return mixed
+     * @throws \Exception
      */
     public function parse($mappings = [])
     {
         $this->setMappings($mappings);
-        $this->buildExpressions();
+
+        $expression = $this->normalizeExpression($this->expression);
+        $ast = $this->buildAST($expression);
+
+        $this->result = $this->processor->process($ast);
 
         return $this->result();
+    }
+
+    /**
+     * Gets mappings to be parsed with
+     *
+     * @param null $key
+     *
+     * @return mixed
+     */
+    public function getMappings($key = null)
+    {
+        if (is_null($key)) {
+            return $this->mappings;
+        }
+
+        return $this->mappings[$key] ?? '';
+    }
+
+    /**
+     * Gets mappings to be parsed with
+     *
+     * @return HandlerProxy
+     */
+    public function getProxy(): HandlerProxy
+    {
+        return $this->handlerProxy;
     }
 
     /**
@@ -105,24 +138,31 @@ EOD;
      *
      * @param $mappings
      */
-    protected function setMappings($mappings = [])
+    protected function setMappings($mappings = []): void
     {
         $this->mappings = $mappings;
     }
 
-    private function normalizeExpression($expression)
+    /**
+     * Normalized an expression to valid PHP source code
+     *
+     * @param $expression
+     *
+     * @return string
+     */
+    protected function normalizeExpression($expression): string
     {
         do {
-            $expression = preg_replace_callback(self::RE_NORMALIZE_PATTERN, function ($m) use ($expression) {
-                if (!empty($m['JSON']) ) {
-                    return "'" . $m[0] . "'";
+            $expression = preg_replace_callback(self::RE_NORMALIZE_PATTERN, function ($matches) use ($expression) {
+                if (!empty($matches['JSON'])) {
+                    return "'" . $matches[0] . "'";
                 }
 
-                if ( !empty($m['placeholder']) ) {
-                    return '$' . trim($m[0], '[]');
+                if (!empty($matches['placeholder'])) {
+                    return '$' . trim($matches[0], '[]');
                 }
 
-                $placeholders = preg_split('~[^_a-zA-Z0-9\x7f-\xff]+~', $m[0], -1, PREG_SPLIT_NO_EMPTY);
+                $placeholders = preg_split('~[^_a-zA-Z0-9\x7f-\xff]+~', $matches[0], -1, PREG_SPLIT_NO_EMPTY);
                 return '[$' . implode(',$', $placeholders) . ']';
             }, $expression, -1, $count);
         } while ($count);
@@ -130,86 +170,18 @@ EOD;
         return '<?php '.$expression.';';
     }
 
-    protected function buildExpressions()
+    /**
+     * Tokenizes the expression to AST
+     *
+     * @param $expression
+     *
+     * @return string
+     */
+    protected function buildAST(string $expression)
     {
-        $expression = $this->normalizeExpression($this->expression);
-
         /** @var \PhpParser\Parser\Php7 $parser */
         $parser = (new ParserFactory)->create(ParserFactory::ONLY_PHP7);
-        try {
-            /** @var \PhpParser\Node\Stmt\Expression[]|null $ast */
-            $ast = $parser->parse($expression);
-        } catch (Error $error) {
-            echo "Parse error: {$error->getMessage()}\nLive with it. :P";
-            return '';
-        }
 
-        $this->result = $this->buildRecursive($ast);
-    }
-
-    /**
-     * Does the magic. Loops over all parsed AST nodes and pipes them through expression helpers
-     *
-     * @param $node
-     *
-     * @return mixed|Node\Expr|string
-     */
-    public function buildRecursive($node)
-    {
-        if ($node instanceof Node) {
-            foreach ($node->getSubNodeNames() as $key) {
-
-                if ($node instanceof Node\Expr\ArrayItem) {
-                    $value = $node->value;
-                } else {
-                    $value = $node->$key;
-                }
-
-                if ($value instanceof Node\Expr\FuncCall) {
-                    $funcName = $value->name->parts[0];
-                    $funcArgs = array_map(function ($arg) {
-                        return $this->buildRecursive($arg);
-                    }, $value->args);
-
-                    $args = $funcArgs;
-
-                    if ($funcName === 'has') {
-                        // TODO: Add foolproof protection.
-                        // TODO: It should be refactored using something like optional() helper
-                        // @link https://gist.github.com/derekmd/b6f1923bb55a714d90a86838125572f2
-                        // @link https://laravel.com/docs/5.6/helpers#method-optional
-                        $args = [$value->args[0]->value->name];
-                    }
-
-                    return call_user_func_array(
-                        [$this->handlerProxy, $funcName],
-                        $args
-                    );
-                } elseif ($value instanceof Node\Expr\Array_) {
-                    return array_map(function ($arg) {
-                        return $this->buildRecursive($arg);
-                    }, $value->items);
-                } elseif ($value instanceof Node\Expr\Variable) {
-                    return $this->mappings[$value->name] ?? '';
-                } elseif ($value instanceof Node\Scalar) {
-                    $return = $value->value;
-                    if ($value instanceof Node\Scalar\String_ && $json = json_decode($return)) {
-                        return $json;
-                    }
-                    return $return;
-                }
-                return $this->buildRecursive($value);
-            }
-        } elseif (is_array($node)) {
-            foreach ($node as $key => $value) {
-                if (is_scalar($value) || is_null($value)) {
-                    return $value;
-                } else {
-                    return $this->buildRecursive($value);
-                }
-            }
-        }
-
-        throw new \InvalidArgumentException('Can only build nodes and arrays.');
+        return $parser->parse($expression);
     }
 }

@@ -2,8 +2,6 @@
 
 namespace DI\ExpressionParser;
 
-use DI\ExpressionParser\Handlers\BaseHandler;
-use DI\ExpressionParser\Handlers\Standard;
 use ReflectionClass;
 
 class HandlerProxy
@@ -37,6 +35,8 @@ class HandlerProxy
      */
     public function __call($name, $arguments)
     {
+        $name = $this->camelCase($name);
+
         foreach ($this->handlers as $handler) {
             if (method_exists($handler, $name)) {
                 return call_user_func_array([$handler, $name], $arguments);
@@ -70,5 +70,18 @@ class HandlerProxy
 
             $this->handlers[$prefix] = new $handler($this->context);
         }
+    }
+
+    /**
+     * Converts $param to camelCase
+     *
+     * @param        $string
+     *
+     * @return mixed
+     */
+    private function camelCase($string)
+    {
+        $string = ucwords(str_replace(['-', '_'], ' ', $string));
+        return lcfirst(str_replace(' ', '', $string));
     }
 }

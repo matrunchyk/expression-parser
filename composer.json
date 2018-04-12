@@ -12,5 +12,10 @@
             "DI\\ExpressionParser\\Tests\\": "tests/"
         }
     },
+    "scripts": {
+        "phpcs": "phpcs -p --standard=PSR2 . --ignore=vendor",
+        "phpmd": "phpmd ./src text codesize,cleancode,controversial,design,naming,unusedcode",
+        "lint": "composer phpcs && composer phpmd"
+    },
     "minimum-stability": "dev"
 }

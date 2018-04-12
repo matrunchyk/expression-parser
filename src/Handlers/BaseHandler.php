@@ -19,7 +19,7 @@ abstract class BaseHandler
      *
      * @param ExpressionParser $context
      */
-    public final function __construct(ExpressionParser $context)
+    final public function __construct(ExpressionParser $context)
     {
         $this->context = $context;
     }

@@ -11,76 +11,18 @@ namespace DI\ExpressionParser\Handlers;
 class Standard extends BaseHandler
 {
     /**
-     * Does AND comparison between $one and $two
-     *
-     * @param $one
-     * @param $two
-     *
-     * @return bool
-     */
-    public function and_x($one, $two) {
-        return $one && $two;
-    }
-
-    /**
-     * Does OR comparison between $one and $two
-     *
-     * @param $one
-     * @param $two
-     *
-     * @return bool
-     */
-    public function or_x($one, $two) {
-        return $one || $two;
-    }
-
-    /**
-     * Checks whether two arguments are equal
-     *
-     * @param $one mixed
-     * @param $two mixed
-     *
-     * @return bool
-     */
-    public function equal($one, $two) {
-        return $one === $two;
-    }
-
-    /**
-     * Applies logical NOT to $one
-     *
-     * @param $one
-     *
-     * @return bool
-     */
-    public function not($one): bool
-    {
-        return !$one;
-    }
-
-    /**
-     * Checks whether $one is greater than $two
-     *
-     * @param $one
-     * @param $two
-     *
-     * @return bool
-     */
-    public function great_than($one, $two): bool
-    {
-        return $one > $two;
-    }
-
-    /**
      * Checks whether argument $one is in array $two
      *
      * @param mixed $needle
      * @param array $haystack
      * @param bool  $strict
      *
+     * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
+     *
      * @return bool
      */
-    public function in_array(array $haystack, $needle, $strict = false) {
+    public function inArray(array $haystack, $needle, $strict = false)
+    {
         return in_array($needle, $haystack, $strict);
     }
 
@@ -92,20 +34,21 @@ class Standard extends BaseHandler
      *
      * @return array
      */
-    public function explode(string $string, $delimiter = ','): array {
+    public function explode(string $string, $delimiter = ','): array
+    {
         return explode($delimiter, $string);
     }
 
     /**
      * Checks whether $mapping_name exists in context mappings array
      *
-     * @param $mapping_name
+     * @param $mappingName
      *
      * @return bool
      */
-    public function has(string $mapping_name): bool
+    public function has(string $mappingName): bool
     {
-        return isset($this->context->mappings[$mapping_name]);
+        return !empty($this->context->getMappings($mappingName));
     }
 
     /**
@@ -125,13 +68,15 @@ class Standard extends BaseHandler
      * Checks whether $one is empty
      *
      * @param mixed $one
-     * @param bool $filter_arrays
+     * @param bool  $filterArrays
+     *
+     * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
      *
      * @return bool
      */
-    public function is_empty($one, $filter_arrays = true): bool
+    public function isEmpty($one, $filterArrays = true): bool
     {
-        if ($filter_arrays && gettype($one) === 'array') {
+        if ($filterArrays && gettype($one) === 'array') {
             $one = array_filter($one);
         }
         return empty($one);
@@ -146,10 +91,10 @@ class Standard extends BaseHandler
      *
      * @return bool
      */
-    public function matches_in_array(array $haystack, $needle, \stdClass $flags = null)
+    public function matchesInArray(array $haystack, $needle, \stdClass $flags = null)
     {
         $sensitive = $flags && $flags->sensitive;
-        return (bool) array_filter($haystack, function($item) use ($needle, $sensitive) {
+        return (bool) array_filter($haystack, function ($item) use ($needle, $sensitive) {
             if ($sensitive) {
                 return (strpos($item, $needle) !== false);
             }
@@ -157,34 +102,31 @@ class Standard extends BaseHandler
         });
     }
 
-    public function get($one, \stdClass $flags = null)
+    /**
+     * Returns value based on $param parameter and $flags
+     *
+     * @param                $param
+     * @param \stdClass|null $flags
+     *
+     * @return int|mixed
+     */
+    public function get($param, \stdClass $flags = null)
     {
         $count = $flags && !empty($flags->count);
         $nullable = $flags && !empty($flags->nullable);
         $maps = $flags && !empty($flags->map) ? (array) $flags->map : [];
 
-        foreach ($maps as $map_key => $map_value) {
-            if ($map_key === $one) {
-                $one = $map_value;
-            }
-        }
+        $param = $this->getMappingInArray($param, $maps);
 
         if (!$nullable) {
-            if (gettype($one) === 'object') {
-                $one = (object) array_filter((array) $one);
-            } else if (gettype($one) === 'array') {
-                $one = array_filter($one);
-            }
+            $this->filterNullables($param);
         }
 
         if ($count) {
-            if (!is_array($one) && !$one instanceof \Countable) {
-                throw new \InvalidArgumentException('Error calling "get": first parameter is not countable');
-            }
-            return count($one);
+            return count($param);
         }
 
-        return $one;
+        return $param;
     }
 
     /**
@@ -213,10 +155,10 @@ class Standard extends BaseHandler
     {
         if ($dir === 'asc') {
             asort($items);
-        } else {
-            arsort($items);
+            return $items;
         }
 
+        arsort($items);
         return $items;
     }
 
@@ -231,5 +173,42 @@ class Standard extends BaseHandler
     public function take(array $items, $offset = 10): array
     {
         return collect($items)->take($offset)->toArray();
+    }
+
+    /**
+     * Returns $mapping from $maps array
+     *
+     * @param       $mapping
+     * @param array $maps
+     *
+     * @return mixed
+     */
+    private function getMappingInArray($mapping, array $maps)
+    {
+        foreach ($maps as $mapKey => $mapValue) {
+            if ($mapKey === $mapping) {
+                $mapping = $mapValue;
+            }
+        }
+
+        return $mapping;
+    }
+
+    /**
+     * Filters out empty values in array and object
+     *
+     * @param $param
+     *
+     * @return array|\stdClass
+     */
+    private function filterNullables($param)
+    {
+        if (gettype($param) === 'object') {
+            return (object) array_filter((array) $param);
+        } elseif (gettype($param) === 'array') {
+            return array_filter($param);
+        }
+
+        return $param;
     }
 }

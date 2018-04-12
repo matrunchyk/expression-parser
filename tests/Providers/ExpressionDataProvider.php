@@ -4,13 +4,13 @@ use DI\ExpressionParser\Expression;
 use DI\ExpressionParser\ExpressionParser;
 
 return [
-    'simple substitution' => [
-        new Expression('[attr1]'),
+    'has helper with substitution' => [
+        new Expression('has([attr1])'),
         [
             'attr1' => 1,
             'attr2' => 2,
         ],
-        '1',
+        true,
     ],
     'get helper and mapping parameters' => [
         new Expression('get([attr1], {"map":{"a":1, "b": 2, "c": 3}})'),
@@ -18,6 +18,14 @@ return [
             'attr1' => 'b',
         ],
         2,
+    ],
+    'simple substitution' => [
+        new Expression('[attr1]'),
+        [
+            'attr1' => 1,
+            'attr2' => 2,
+        ],
+        '1',
     ],
     'get helper and parameters with substitutions' => [
         new Expression('get([attr1], {"count":true, "nullable":false})'),
@@ -85,14 +93,6 @@ return [
             'Rooms' => 'Pantry,Study',
         ],
         ['Pantry', 'Study'],
-    ],
-    'has helper with substitution' => [
-        new Expression('has([attr1])'),
-        [
-            'attr1' => 1,
-            'attr2' => 2,
-        ],
-        true,
     ],
     'equal helper with substitution [experiment]' => [
         new Expression('or_x(equal([attr1], 1), in_array(explode([keywords]), "hello"))'),
@@ -247,9 +247,9 @@ return [
                 30,
                 20,
             ],
-            'filter_func' => function(ExpressionParser $context, $value) {
+            'filter_func' => function (ExpressionParser $context, $value) {
                 return array_filter($value, function ($item) use ($context) {
-                    return $item < $context->mappings['filter_attr'];
+                    return $item < $context->getMappings('filter_attr');
                 });
             },
             'filter_attr' => 30,

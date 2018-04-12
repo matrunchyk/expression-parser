@@ -13,6 +13,8 @@ class ExpressionTest extends TestCase
      * @param Expression $expression
      * @param            $params
      * @param            $expected
+     *
+     * @throws \Exception
      */
     public function testAllExpressions(Expression $expression, $params, $expected)
     {

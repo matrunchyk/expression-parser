@@ -25,4 +25,5 @@ cache:
     - $HOME/.composer/cache
 
 script:
+  - composer lint
   - vendor/bin/phpunit
