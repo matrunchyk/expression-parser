@@ -1,5 +1,4 @@
-# expression-parser
-Expression Parser
+# Expression Parser
 
 This package allows to substitute (map) process large amounts of data in flexible manner, providing inline processing scenarios:
 ### Install
