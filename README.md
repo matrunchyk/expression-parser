@@ -1,5 +1,13 @@
 # Expression Parser
 
+<p align="center">
+<a href="https://travis-ci.org/matrunchyk/expression-parser"><img src="https://travis-ci.org/matrunchyk/expression-parser.svg" alt="Build Status"></a>
+<img src="https://poser.pugx.org/matrunchyk/expression-parser/d/total" alt="Total Downloads">
+<img src="https://poser.pugx.org/matrunchyk/expression-parser/v/stable" alt="Latest Stable Version">
+<img src="https://poser.pugx.org/matrunchyk/expression-parser/license" alt="License">
+</p>
+
+
 This package allows to substitute (map) process large amounts of data in flexible manner, providing inline processing scenarios:
 ### Install
 
