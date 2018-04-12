@@ -1,7 +1,7 @@
 # Expression Parser
 
 <p align="center">
-<a href="https://travis-ci.org/matrunchyk/expression-parser"><img src="https://travis-ci.org/matrunchyk/expression-parser.svg" alt="Build Status"></a>
+<a href="https://travis-ci.org/matrunchyk/expression-parser"><img src="https://api.travis-ci.org/matrunchyk/expression-parser.svg?branch=master" alt="Build Status"></a>
 <img src="https://poser.pugx.org/matrunchyk/expression-parser/d/total" alt="Total Downloads">
 <img src="https://poser.pugx.org/matrunchyk/expression-parser/v/stable" alt="Latest Stable Version">
 <img src="https://poser.pugx.org/matrunchyk/expression-parser/license" alt="License">
