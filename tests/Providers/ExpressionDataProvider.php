@@ -4,21 +4,6 @@ use DI\ExpressionParser\Expression;
 use DI\ExpressionParser\ExpressionParser;
 
 return [
-    'has helper with substitution' => [
-        new Expression('has([attr1])'),
-        [
-            'attr1' => 1,
-            'attr2' => 2,
-        ],
-        true,
-    ],
-    'get helper and mapping parameters' => [
-        new Expression('get([attr1], {"map":{"a":1, "b": 2, "c": 3}})'),
-        [
-            'attr1' => 'b',
-        ],
-        2,
-    ],
     'simple substitution' => [
         new Expression('[attr1]'),
         [
@@ -37,6 +22,21 @@ return [
             ],
         ],
         3,
+    ],
+    'has helper with substitution' => [
+        new Expression('has([attr1])'),
+        [
+            'attr1' => 1,
+            'attr2' => 2,
+        ],
+        true,
+    ],
+    'get helper and mapping parameters' => [
+        new Expression('get([attr1], {"map":{"a":1, "b": 2, "c": 3}})'),
+        [
+            'attr1' => 'b',
+        ],
+        2,
     ],
     'matches_in_array helper and parameter with invalid substitution' => [
         new Expression('matches_in_array([keywords], "pool", {"sensitive":true})'),

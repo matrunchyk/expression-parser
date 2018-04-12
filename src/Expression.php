@@ -18,10 +18,12 @@ class Expression
      * Expression constructor.
      *
      * @param string $expressionString
+     * @param array  $mappings
      */
-    public function __construct(string $expressionString)
+    public function __construct(string $expressionString, array $mappings = [])
     {
         $this->parser = new ExpressionParser($expressionString);
+        $this->mappings = $mappings;
     }
 
     /**
