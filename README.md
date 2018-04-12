@@ -15,7 +15,7 @@ This package allows to substitute (map) process large amounts of data in flexibl
 
 ### Usage
 
-####Standard function handler
+#### Standard function handler
 
 ##### Simple substitution
 Input: 
@@ -57,7 +57,7 @@ new Expression(
 )
 ```
 
-####Laravel collection handler
+#### Laravel collection handler
 
 ##### Collect mapped arguments and take a first item
 
