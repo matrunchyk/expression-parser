@@ -7,7 +7,7 @@
 <img src="https://poser.pugx.org/pugx/badge-poser/license?format=flat" alt="License">
 </p>
 
-This package allows to substitute (map) process large amounts of data in flexible manner, providing inline processing scenarios:
+This package allows to parse with mapping map large amounts of data in flexible manner, providing various processing functions:
 
 ## 🔩 Install
 
