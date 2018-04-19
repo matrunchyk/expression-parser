@@ -10,7 +10,7 @@
             "homepage": "https://digitalidea.studio",
             "role": "Developer"
         }
-    ]
+    ],
     "require": {
         "tightenco/collect": "^5.6",
         "phpunit/phpunit": "^7.1",
