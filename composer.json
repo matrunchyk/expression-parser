@@ -1,6 +1,6 @@
 {
     "name": "di/expression-parser",
-    "version": "0.2.0",
+    "version": "0.2.2",
     "description": "This package allows to evaluate (parse with mapping) large amounts of data in flexible manner, providing various processing functions",
     "keywords": ["library", "expression", "parser", "parsing", "evaluate", "laravel", "compiler"],
     "license": "BSD-3-Clause",
