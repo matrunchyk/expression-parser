@@ -4,7 +4,6 @@
 <a href="https://travis-ci.org/matrunchyk/expression-parser"><img src="https://api.travis-ci.org/matrunchyk/expression-parser.svg?branch=master" alt="Build Status"></a>
 <img src="https://img.shields.io/github/package-json/v/badges/shields.svg" alt="Last version">
 <img src="https://poser.pugx.org/pugx/badge-poser/license?format=flat" alt="License">
-<img src="https://img.shields.io/packagist/php-v/matrunchyk/expression-parser.svg" alt="PHP from Packagist">
 </p>
 
 This package allows to evaluate (parse with mapping) large amounts of data in flexible manner, providing various processing functions:
