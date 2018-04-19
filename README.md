@@ -3,7 +3,9 @@
 <p align="center">
 <a href="https://travis-ci.org/matrunchyk/expression-parser"><img src="https://api.travis-ci.org/matrunchyk/expression-parser.svg?branch=master" alt="Build Status"></a>
 <img src="https://poser.pugx.org/matrunchyk/expression-parser/d/total" alt="Total Downloads">
-<img src="https://poser.pugx.org/matrunchyk/expression-parser/v/stable" alt="Latest Stable Version">
+
+[![GitHub package version](https://img.shields.io/github/package-json/v/badges/shields.svg)](https://github.com/matrunchyk/expression-parser)
+
 <img src="https://poser.pugx.org/pugx/badge-poser/license?format=flat" alt="License">
 </p>
 
