@@ -1,5 +1,16 @@
 {
     "name": "di/expression-parser",
+    "description": "This package allows to evaluate (parse with mapping) large amounts of data in flexible manner, providing various processing functions",
+    "keywords": ["library", "expression", "parser", "parsing", "evaluate", "laravel", "compiler"],
+    "license": "BSD-3-Clause",
+    "authors": [
+        {
+            "name": "Serhii Matrunchyk",
+            "email": "serhii@digitalidea.studio",
+            "homepage": "https://digitalidea.studio",
+            "role": "Developer"
+        }
+    ]
     "require": {
         "tightenco/collect": "^5.6",
         "phpunit/phpunit": "^7.1",
