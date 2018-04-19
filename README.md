@@ -11,7 +11,7 @@ This package allows to substitute (map) process large amounts of data in flexibl
 
 ## 🔩 Install
 
-`composer install matrunchyk/expression-parser`
+`composer install di/expression-parser`
 
 ## ⚒ Usage
 
