@@ -1,4 +1,4 @@
-# ⛓ Expression Parser
+# ⛓ Expression Parser v0.2.3
 
 <p align="center">
 <a href="https://travis-ci.org/matrunchyk/expression-parser"><img src="https://api.travis-ci.org/matrunchyk/expression-parser.svg?branch=master" alt="Build Status"></a>
