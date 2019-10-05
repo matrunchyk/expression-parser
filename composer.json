@@ -30,7 +30,8 @@
     "scripts": {
         "phpcs": "vendor/bin/phpcs -p --standard=PSR2 . --ignore=vendor",
         "phpmd": "vendor/bin/phpmd ./src text codesize,cleancode,controversial,design,naming,unusedcode",
-        "lint": "composer phpcs && composer phpmd"
+        "lint": "composer phpcs && composer phpmd",
+        "test": "phpunit"
     },
     "minimum-stability": "stable",
     "prefer-stable": true

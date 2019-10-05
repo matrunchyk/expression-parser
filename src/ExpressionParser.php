@@ -152,6 +152,7 @@ EOD;
      */
     protected function normalizeExpression($expression): string
     {
+        $count = 0;
         do {
             $expression = preg_replace_callback(self::RE_NORMALIZE_PATTERN, function ($matches) use ($expression) {
                 if (!empty($matches['JSON'])) {

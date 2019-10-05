@@ -3,6 +3,7 @@
 namespace DI\ExpressionParser;
 
 use PhpParser\Node;
+use InvalidArgumentException;
 
 class AstProcessor
 {
@@ -34,7 +35,7 @@ class AstProcessor
             return $this->buildArray($tree);
         }
 
-        throw new \InvalidArgumentException('Can only build nodes and arrays.');
+        throw new InvalidArgumentException('Can only build nodes and arrays.');
     }
 
     /**

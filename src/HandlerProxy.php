@@ -3,6 +3,7 @@
 namespace DI\ExpressionParser;
 
 use ReflectionClass;
+use InvalidArgumentException;
 
 class HandlerProxy
 {
@@ -31,7 +32,7 @@ class HandlerProxy
      * @param $arguments
      *
      * @return mixed
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function __call($name, $arguments)
     {
@@ -42,30 +43,30 @@ class HandlerProxy
                 return call_user_func_array([$handler, $name], $arguments);
             }
         }
-        throw new \InvalidArgumentException('Cannot resolve '.$name.' function.');
+        throw new InvalidArgumentException('Cannot resolve '.$name.' function.');
     }
 
     /**
      * Loads expression handlers from config and caches their instances
      *
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     protected function loadHandlers()
     {
         $handlers = include __DIR__ . '/../config/handlers.php';
         foreach ($handlers as $prefix => $handler) {
             if (class_exists(addslashes($handler))) {
-                throw new \InvalidArgumentException('Class '.$handler.' does not exist.');
+                throw new InvalidArgumentException('Class '.$handler.' does not exist.');
             }
 
             try {
                 $refClass = new ReflectionClass($handler);
             } catch (\Exception $e) {
-                throw new \InvalidArgumentException('Unable to load '.$handler.' class.');
+                throw new InvalidArgumentException('Unable to load '.$handler.' class.');
             }
 
             if (!$refClass->isInstantiable()) {
-                throw new \InvalidArgumentException('Class '.$handler.' is not instantiable.');
+                throw new InvalidArgumentException('Class '.$handler.' is not instantiable.');
             }
 
             $this->handlers[$prefix] = new $handler($this->context);
