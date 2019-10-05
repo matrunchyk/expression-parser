@@ -27,4 +27,4 @@ cache:
 
 script:
   - composer lint
-  - vendor/bin/phpunit
+  - composer test
